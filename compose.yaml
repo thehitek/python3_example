@@ -1,0 +1,24 @@
+services:
+    app:
+        build:
+            context: ./ # тут ищем dockerfile
+            dockerfile: ./dockerfile # по дефолту так
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+        restart: unless-stopped
+        # окружение прокинуто внутри кода
+        # запуск через докер использует только .env.dev
+    db:
+        build:
+            context: ./mysql/ # тут ищем dockerfile
+            dockerfile: ./dockerfile # по дефолту так
+        env_file: # нужно прокинуть окружение
+            - ./.env.dev
+        volumes:
+            - mysql:/var/lib/mysql
+            - ./mysql/initdb:/docker-entrypoint-initdb.d
+        restart: unless-stopped
+volumes:
+    mysql:
